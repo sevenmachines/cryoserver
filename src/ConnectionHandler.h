@@ -9,6 +9,7 @@
 #define CONNECTIONHANDLER_H_
 
 namespace cryomesh {
+namespace server {
 
 /**
  * Server class to handle incoming connections and queue them for execution
@@ -20,5 +21,5 @@ public:
 };
 
 }
-
+}
 #endif /* CONNECTIONHANDLER_H_ */

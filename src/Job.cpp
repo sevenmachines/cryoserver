@@ -1,23 +1,25 @@
 /*
- * ConnectionHandler.cpp
+ * Job.cpp
  *
- *  Created on: 19 Mar 2011
+ *  Created on: 23 Mar 2011
  *      Author: "SevenMachines <SevenMachines@yahoo.co.uk>"
  */
 
-#include "ConnectionHandler.h"
+#include "Job.h"
 
 namespace cryomesh {
+
 namespace server {
 
-ConnectionHandler::ConnectionHandler() {
+Job::Job() {
 	// TODO Auto-generated constructor stub
 
 }
 
-ConnectionHandler::~ConnectionHandler() {
+Job::~Job() {
 	// TODO Auto-generated destructor stub
 }
 
 }
+
 }

@@ -9,6 +9,7 @@
 #define CLIENT_H_
 
 namespace cryomesh {
+namespace server {
 
 /**
  * Client class to interact with the server to manage cryomesh instances
@@ -20,5 +21,5 @@ public:
 };
 
 }
-
+}
 #endif /* CLIENT_H_ */

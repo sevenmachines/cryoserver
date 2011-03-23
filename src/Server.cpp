@@ -8,6 +8,7 @@
 #include "Server.h"
 
 namespace cryomesh {
+namespace server {
 
 Server::Server() {
 	// TODO Auto-generated constructor stub
@@ -18,4 +19,5 @@ Server::~Server() {
 	// TODO Auto-generated destructor stub
 }
 
+}
 }

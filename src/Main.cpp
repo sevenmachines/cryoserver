@@ -18,4 +18,12 @@ Main::~Main() {
 	// TODO Auto-generated destructor stub
 }
 
+}//NAMESPACE
+
+#ifndef CRYOSERVER_CUTE
+
+int main(int argc, char **argv) {
+	return 0;
 }
+
+#endif
