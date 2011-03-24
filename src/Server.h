@@ -9,11 +9,15 @@
 #define SERVER_H_
 
 #include "Job.h"
+#include "ServerDefs.h"
 #include "manager/CryoManager.h"
+#include "common/SimpleCollection.h"
 
 #include <list>
 #include <map>
 #include <string>
+#include <boost/shared_ptr.hpp>
+
 /**
  * Class to collect commands from a ConnectionHandler and to execute those commands
  * at sane points in the running cryomesh process. Commands are grouped into 'immediate',
@@ -27,42 +31,49 @@ namespace server {
 class Server {
 public:
 
-	/**
-	 * Typedef to simplify function pointers to crymesh commands
-	 */
-	typedef void (cryomesh::manager::CryoManager::*commandFunction)	();
-
 	Server();
 	virtual ~Server();
+	void doJobs(JobPriority & priority);
+	void addJob(CommandList com, JobPriority & priority);
+
+protected:
+	std::list<boost::shared_ptr< Job > > & getMutableJobsList(const JobPriority & priority);
 
 private:
 	/**
 	 * List of immediate jobs
 	 *
-	 * @var std::list<Job>
+	 * @var std::list<boost::shared_ptr< Job > >
 	 */
-	std::list<Job> immediateJobs;
+	std::list<boost::shared_ptr< Job > > immediateJobs;
 
 	/**
 	 * List of per cycle jobs
 	 *
-	 * @var std::list<Job>
+	 * @var std::list<boost::shared_ptr< Job > >
 	 */
-	std::list<Job> cycleJobs;
+	std::list<boost::shared_ptr< Job > > cycleJobs;
 
 	/**
 	 * List of maintenance jobs
 	 *
-	 * @var std::list<Job>
+	 * @var std::list<boost::shared_ptr< Job > >
 	 */
-	std::list<Job> maintenceJobs;
+	std::list<boost::shared_ptr< Job > > maintenceJobs;
 
 	/**
 	 * Mapping of string commands to function pointer commands
 	 *
-	 *	@var std::map<std::string, commandFunction>
+	 *	@var std::map<CommandList, commandFunction>
 	 */
-	std::map<std::string, commandFunction> serverCommandFunctions;
+	std::map<CommandList, commandFunction> serverCommandFunctions;
+
+	/**
+	 * The cryomanager associated with this server
+	 *
+	 * @var boost::shared_ptr< manager::CryoManager >
+	 */
+	boost::shared_ptr< cryomesh::manager::CryoManager > cryomanager;
 };
 
 }

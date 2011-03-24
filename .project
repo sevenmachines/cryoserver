@@ -3,6 +3,7 @@
 	<name>cryoserver</name>
 	<comment></comment>
 	<projects>
+		<project>cryomesh</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

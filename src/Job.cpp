@@ -11,15 +11,24 @@ namespace cryomesh {
 
 namespace server {
 
-Job::Job() {
-	// TODO Auto-generated constructor stub
+Job::Job(CommandList com, JobPriority & pty, commandFunction func) :
+	command(com), priority(pty), function(func) {
 
 }
 
 Job::~Job() {
-	// TODO Auto-generated destructor stub
 }
 
+const CommandList & Job::getCommand() const {
+	return command;
+}
+const JobPriority & Job::getPriority() const {
+	return priority;
+}
+commandFunction Job::getFunction(){
+	return function;
 }
 
-}
+}//NAMESPACE
+
+}//NAMESPACE

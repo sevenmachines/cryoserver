@@ -8,6 +8,8 @@
 #ifndef JOB_H_
 #define JOB_H_
 
+#include "ServerDefs.h"
+
 namespace cryomesh {
 
 namespace server {
@@ -17,8 +19,18 @@ namespace server {
  */
 class Job {
 public:
-	Job();
+
+	Job(CommandList com, JobPriority & pty, commandFunction  func);
 	virtual ~Job();
+
+	const CommandList & getCommand() const;
+	const JobPriority & getPriority()const;
+	commandFunction getFunction();
+
+private:
+	CommandList command;
+	JobPriority priority;
+	commandFunction  function;
 };
 
 }
