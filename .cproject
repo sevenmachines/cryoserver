@@ -33,7 +33,7 @@
 								<option id="gnu.cpp.link.option.paths.625492735" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh/Gcov}&quot;"/>
 								</option>
-								<option id="gnu.cpp.link.option.libs.80107160" superClass="gnu.cpp.link.option.libs" valueType="libs">
+								<option id="gnu.cpp.link.option.libs.80107160" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="sqlite3"/>
 									<listOptionValue builtIn="false" value="cryomesh"/>
 								</option>
@@ -45,6 +45,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1902942120" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base">
 								<option id="gnu.both.asm.option.include.paths.762647700" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh-common/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2119042559" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -497,6 +498,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.813026111" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 								<option id="gnu.cpp.compiler.option.include.paths.1535382873" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh-common/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.939725642" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++0x" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.175530233" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -522,6 +524,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1068390450" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base">
 								<option id="gnu.both.asm.option.include.paths.1384108748" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cryomesh-common/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.765714620" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>

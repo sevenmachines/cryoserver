@@ -23,7 +23,7 @@ namespace server {
 typedef void (cryomesh::manager::CryoManager::*commandFunction)	();
 
 enum JobPriority {
-	IMMEDIATE, CYCLE, MAINTENANCE
+	IMMEDIATE, CYCLE, CASUAL
 };
 
 enum CommandList {

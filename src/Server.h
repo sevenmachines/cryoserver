@@ -17,6 +17,7 @@
 #include <map>
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <ostream>
 
 /**
  * Class to collect commands from a ConnectionHandler and to execute those commands
@@ -33,11 +34,37 @@ public:
 
 	Server();
 	virtual ~Server();
-	void doJobs(JobPriority & priority);
-	void addJob(CommandList com, JobPriority & priority);
+	void doJobs(JobPriority priority);
+	void addJob(CommandList com, JobPriority priority);
+
+	const std::list<boost::shared_ptr<Job> > & getImmediateJobs() const;
+
+	const std::list<boost::shared_ptr<Job> > & getCycleJobs() const;
+
+	const std::list<boost::shared_ptr<Job> > & getCasualJobs() const;
+
+	/**
+		 * To stream operator
+		 *
+		 *	@param std::ostream & os
+		 *		The output stream
+		 *	@param const Server & obj
+		 *		The object to stream
+		 *
+		 *	@return std::ostream &
+		 *		The output stream
+		 */
+		friend std::ostream& operator<<(std::ostream & os, const Server & obj);
+
+		static commandFunction RUN_COMMAND;
+		static commandFunction PAUSE_COMMAND;
+		static commandFunction STOP_COMMAND;
+		static commandFunction DESTROY_COMMAND;
 
 protected:
-	std::list<boost::shared_ptr< Job > > & getMutableJobsList(const JobPriority & priority);
+	std::list<boost::shared_ptr<Job> > & getMutableJobsList(const JobPriority  priority);
+
+	 void initialiseManager();
 
 private:
 	/**
@@ -45,21 +72,21 @@ private:
 	 *
 	 * @var std::list<boost::shared_ptr< Job > >
 	 */
-	std::list<boost::shared_ptr< Job > > immediateJobs;
+	std::list<boost::shared_ptr<Job> > immediateJobs;
 
 	/**
 	 * List of per cycle jobs
 	 *
 	 * @var std::list<boost::shared_ptr< Job > >
 	 */
-	std::list<boost::shared_ptr< Job > > cycleJobs;
+	std::list<boost::shared_ptr<Job> > cycleJobs;
 
 	/**
-	 * List of maintenance jobs
+	 * List of casual jobs
 	 *
 	 * @var std::list<boost::shared_ptr< Job > >
 	 */
-	std::list<boost::shared_ptr< Job > > maintenceJobs;
+	std::list<boost::shared_ptr<Job> > casualJobs;
 
 	/**
 	 * Mapping of string commands to function pointer commands
@@ -73,7 +100,7 @@ private:
 	 *
 	 * @var boost::shared_ptr< manager::CryoManager >
 	 */
-	boost::shared_ptr< cryomesh::manager::CryoManager > cryomanager;
+	boost::shared_ptr<cryomesh::manager::CryoManager> cryomanager;
 };
 
 }

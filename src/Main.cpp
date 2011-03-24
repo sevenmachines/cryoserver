@@ -6,7 +6,10 @@
  */
 
 #include "Main.h"
+#include "Server.h"
+#include "ServerDefs.h"
 
+using namespace cryomesh::server;
 namespace cryomesh {
 
 Main::Main() {
@@ -23,7 +26,17 @@ Main::~Main() {
 #ifndef CRYOSERVER_CUTE
 
 int main(int argc, char **argv) {
-	return 0;
+	Server server;
+		server.addJob(RUN, IMMEDIATE);
+		server.addJob(STOP, CYCLE);
+		std::cout<<server<<std::endl;
+
+		//TODO maintenace command
+		server.doJobs(IMMEDIATE);
+		server.doJobs(CYCLE);
+
+		std::cout<<server<<std::endl;
+		return 0;
 }
 
 #endif
