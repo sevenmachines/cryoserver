@@ -27,16 +27,17 @@ Main::~Main() {
 
 int main(int argc, char **argv) {
 	Server server;
-		server.addJob(RUN, IMMEDIATE);
-		server.addJob(STOP, CYCLE);
-		std::cout<<server<<std::endl;
+	server.run();
+	//server.addJob(RUN, IMMEDIATE);
+//	server.addJob(STOP, CYCLE);
+	//std::cout << server << std::endl;
 
-		//TODO maintenace command
-		server.doJobs(IMMEDIATE);
-		server.doJobs(CYCLE);
+	///TODO maintenace command
+//	server.doJobs(IMMEDIATE);
+	//server.doJobs(CYCLE);
 
-		std::cout<<server<<std::endl;
-		return 0;
+	//std::cout << server << std::endl;
+	return 0;
 }
 
 #endif

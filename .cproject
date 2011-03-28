@@ -36,6 +36,9 @@
 								<option id="gnu.cpp.link.option.libs.80107160" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="sqlite3"/>
 									<listOptionValue builtIn="false" value="cryomesh"/>
+									<listOptionValue builtIn="false" value="boost-system"/>
+									<listOptionValue builtIn="false" value="boost_thread"/>
+									<listOptionValue builtIn="false" value="boost_regex"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.309771217" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -515,6 +518,9 @@
 								<option id="gnu.cpp.link.option.libs.1627430522" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="cryomesh"/>
 									<listOptionValue builtIn="false" value="sqlite3"/>
+									<listOptionValue builtIn="false" value="boost_system"/>
+									<listOptionValue builtIn="false" value="boost_thread"/>
+									<listOptionValue builtIn="false" value="boost_regex"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.198879643" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

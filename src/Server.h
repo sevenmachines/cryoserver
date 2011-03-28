@@ -12,12 +12,15 @@
 #include "ServerDefs.h"
 #include "manager/CryoManager.h"
 #include "common/SimpleCollection.h"
+#include "ConnectionHandler.h"
 
 #include <list>
 #include <map>
+#include <vector>
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include <ostream>
+#include <boost/asio.hpp>
 
 /**
  * Class to collect commands from a ConnectionHandler and to execute those commands
@@ -31,9 +34,12 @@ namespace server {
 
 class Server {
 public:
-
-	Server();
+	enum ServerType {
+		SYNC, ASYNC
+	};
+	Server(const ServerType type = SYNC);
 	virtual ~Server();
+	void run();
 	void doJobs(JobPriority priority);
 	void addJob(CommandList com, JobPriority priority);
 
@@ -44,27 +50,39 @@ public:
 	const std::list<boost::shared_ptr<Job> > & getCasualJobs() const;
 
 	/**
-		 * To stream operator
-		 *
-		 *	@param std::ostream & os
-		 *		The output stream
-		 *	@param const Server & obj
-		 *		The object to stream
-		 *
-		 *	@return std::ostream &
-		 *		The output stream
-		 */
-		friend std::ostream& operator<<(std::ostream & os, const Server & obj);
+	 * To stream operator
+	 *
+	 *	@param std::ostream & os
+	 *		The output stream
+	 *	@param const Server & obj
+	 *		The object to stream
+	 *
+	 *	@return std::ostream &
+	 *		The output stream
+	 */
+	friend std::ostream& operator<<(std::ostream & os, const Server & obj);
 
-		static commandFunction RUN_COMMAND;
-		static commandFunction PAUSE_COMMAND;
-		static commandFunction STOP_COMMAND;
-		static commandFunction DESTROY_COMMAND;
+	static commandFunction RUN_COMMAND;
+	static commandFunction PAUSE_COMMAND;
+	static commandFunction STOP_COMMAND;
+	static commandFunction DESTROY_COMMAND;
+
+	static unsigned int HANDLER_COUNT;
+	static const int DEFAULT_SERVER_PORT;
 
 protected:
-	std::list<boost::shared_ptr<Job> > & getMutableJobsList(const JobPriority  priority);
 
-	 void initialiseManager();
+	void runSync();
+	void runAsync();
+	void processJobs();
+	void handleAsyncAccept(const boost::system::error_code& e);
+	void handleSyncAccept(boost::asio::ip::tcp::tcp::socket & socket);
+
+	std::list<boost::shared_ptr<Job> > & getMutableJobsList(const JobPriority priority);
+
+	void initialiseManager();
+
+	void initialiseHandlers();
 
 private:
 	/**
@@ -101,6 +119,21 @@ private:
 	 * @var boost::shared_ptr< manager::CryoManager >
 	 */
 	boost::shared_ptr<cryomesh::manager::CryoManager> cryomanager;
+
+	/**
+	 * Pool of connection handlers waiting to deal with connections
+	 *
+	 */
+	std::vector<boost::shared_ptr<ConnectionHandler> > handlers;
+
+	boost::asio::io_service io_service;
+
+	boost::asio::ip::tcp::tcp::acceptor acceptor;
+
+	boost::shared_ptr<ConnectionHandler> new_connection; /**< pointer to connection, that will proceed next */
+
+	ServerType serverType;
+
 };
 
 }

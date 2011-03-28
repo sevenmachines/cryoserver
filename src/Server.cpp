@@ -6,8 +6,12 @@
  */
 
 #include "Server.h"
+#include "ConnectionHandler.h"
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
 
 using namespace cryomesh::manager;
+using boost::asio::ip::tcp;
 
 namespace cryomesh {
 namespace server {
@@ -16,15 +20,101 @@ commandFunction Server::RUN_COMMAND = &CryoManager::run;
 commandFunction Server::PAUSE_COMMAND = &CryoManager::pause;
 commandFunction Server::STOP_COMMAND = &CryoManager::stop;
 commandFunction Server::DESTROY_COMMAND = &CryoManager::destroy;
+const int Server::DEFAULT_SERVER_PORT = 10666;
+unsigned int Server::HANDLER_COUNT = 1;
 
-Server::Server() {
-	initialiseManager();
+Server::Server(const ServerType type) :
+	acceptor(io_service, tcp::endpoint(tcp::v4(), DEFAULT_SERVER_PORT)) {
+	if (serverType == ASYNC) {
+		new_connection = ConnectionHandler::create(io_service);
+		initialiseManager();
+	}
 }
 
 Server::~Server() {
 }
+
+void Server::handleAsyncAccept(const boost::system::error_code& e) {
+	std::cout << "Server::handleAccept: " << "" << std::endl;
+	if (!e) {
+
+		// run connection in new thread
+		boost::thread thr(boost::bind(&ConnectionHandler::run, new_connection));
+
+		// create next connection, that will accepted
+		new_connection = ConnectionHandler::create(io_service);
+		// start new accept operation
+		acceptor.async_accept(new_connection->getSocket(),
+				boost::bind(&Server::handleAsyncAccept, this, boost::asio::placeholders::error));
+
+	}
+
+}
+
+void Server::handleSyncAccept(tcp::socket & socket) {
+	boost::array<char, 128> buf;
+	boost::system::error_code error;
+	size_t lenin = socket.read_some(boost::asio::buffer(buf), error);
+	boost::asio::write(socket, boost::asio::buffer("ballsamento!"));
+	std::cout<<"Server::handleSyncAccept: "<<buf.data()<<std::endl;
+	socket.close();
+}
+
+void Server::processJobs() {
+	bool have_connection = false;
+	bool have_immediate_jobs = false;
+	bool have_cycle_jobs = false;
+
+	//std::cout << "Server::run: " << "DEBUG: Starting to process jobs..." << std::endl;
+	have_immediate_jobs = immediateJobs.size() > 0;
+	if (have_immediate_jobs == true) {
+		std::cout << "Server::run: " << "DEBUG: Processing immediate jobs..." << std::endl;
+		// need to stop run thread
+		//handle requests
+	}
+
+	have_cycle_jobs = cycleJobs.size() > 0;
+	if (have_cycle_jobs == true) {
+		std::cout << "Server::run: " << "DEBUG: Processing cycle jobs..." << std::endl;
+		// wait to stop run thread
+		//handle requests
+	}
+}
+
+void Server::run() {
+	std::cout<<"Server::run: "<<""<<std::endl;
+	if (serverType == SYNC) {
+		this->runSync();
+	} else if (serverType == ASYNC) {
+		this->runAsync();
+	}
+}
+
+void Server::runSync() {
+	std::cout<<"Server::runSync: "<<""<<std::endl;
+	for (;;) {
+		tcp::socket socket(io_service);
+		acceptor.accept(socket);
+		this->handleSyncAccept(socket);
+	}
+}
+void Server::runAsync() {
+	std::cout<<"Server::runAsync: "<<""<<std::endl;
+	bool quit_server = false;
+	while (quit_server == false) {
+		try {
+
+		} catch (std::exception& e) {
+			std::cout << "Server::run: " << "ERROR: Trying to connect to server..." << std::endl;
+			std::cerr << e.what() << std::endl;
+		}
+
+		std::cout << "Server::run: " << "DEBUG: Server stopping..." << std::endl;
+	}
+}
+
 void Server::doJobs(JobPriority priority) {
-	std::list < boost::shared_ptr<Job> > &jobslist = this->getMutableJobsList(priority);
+	std::list<boost::shared_ptr<Job> > &jobslist = this->getMutableJobsList(priority);
 
 	while (jobslist.size() > 0) {
 		commandFunction func = jobslist.front()->getFunction();
@@ -119,6 +209,14 @@ void Server::initialiseManager() {
 	serverCommandFunctions[RUN] = &cryomesh::manager::CryoManager::run;
 	serverCommandFunctions[STOP] = &cryomesh::manager::CryoManager::stop;
 	serverCommandFunctions[DESTROY] = &cryomesh::manager::CryoManager::destroy;
+}
+
+//TODO
+void Server::initialiseHandlers() {
+	//for (int i = 0; i< HANDLER_COUNT; i++) {
+	//	boost::shared_ptr< ConnectionHandler > temp_handler(new ConnectionHandler (*this));
+	//	handlers.push_back(temp_handler) ;
+	//}
 }
 }//NAMESPACE
 }//NAMESPACE

@@ -1,5 +1,7 @@
 HIGH ----------------------------------------------------------------------------------------
 
+* Add command processing to sync server
+
  * Begin work on server to,
  	- run the server
  		- Manager starts unique server thread
