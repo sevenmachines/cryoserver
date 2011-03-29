@@ -20,27 +20,29 @@ namespace server {
 /**
  * Typedef to simplify function pointers to crymesh commands
  */
-typedef void (cryomesh::manager::CryoManager::*commandFunction)	();
+typedef void (cryomesh::manager::CryoManager::*commandFunction)();
 
 enum JobPriority {
 	IMMEDIATE, CYCLE, CASUAL
 };
 
 enum CommandList {
-	PAUSE, RUN, STOP, DESTROY
+	PAUSE, RUN, STOP, DESTROY, NULL_COMMAND
 };
 
 /**
  * Keystore of string commands that can be exchanged between client/servers
  */
-class CommandDefs: common::KeyStore<std::string, CommandList> {
+class CommandDefs: std::map<std::string, CommandList> {
 public:
-
-	static const CommandDefs & getSingleton() {
-		if (defs == 0) {
-			defs = boost::shared_ptr<CommandDefs>(new CommandDefs);
-		}
-		return * defs;
+	/**
+	 * Default constructor
+	 */
+	CommandDefs() {
+		this->insert(std::pair<std::string, CommandList>("run", RUN));
+		this->insert(std::pair<std::string, CommandList>("stop", STOP));
+		this->insert(std::pair<std::string, CommandList>("destroy", DESTROY));
+		this->insert(std::pair<std::string, CommandList>("pause", PAUSE));
 	}
 	/**
 	 * Default destructor
@@ -48,19 +50,16 @@ public:
 	virtual ~CommandDefs() {
 	}
 
-protected:
-	/**
-	 * Default constructor
-	 */
-	CommandDefs() {
-		this->add("run", RUN);
-		this->add("stop", STOP);
-		this->add("destroy", DESTROY);
-		this->add("pause", PAUSE);
+	CommandList getCommand(const std::string comstr) const {
+		std::map<std::string, CommandList>::const_iterator it_found = this->find(comstr);
+		if (it_found == this->end()) {
+			return NULL_COMMAND;
+		}
+		return it_found->second;
 	}
+protected:
 
 private:
-	static boost::shared_ptr<CommandDefs> defs;
 };
 
 }//NAMESPACE

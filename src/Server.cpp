@@ -7,6 +7,7 @@
 
 #include "Server.h"
 #include "ConnectionHandler.h"
+#include "common/Misc.h"
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
@@ -24,11 +25,11 @@ const int Server::DEFAULT_SERVER_PORT = 10666;
 unsigned int Server::HANDLER_COUNT = 1;
 
 Server::Server(const ServerType type) :
-	acceptor(io_service, tcp::endpoint(tcp::v4(), DEFAULT_SERVER_PORT)) {
+	serverType(type), acceptor(io_service, tcp::endpoint(tcp::v4(), DEFAULT_SERVER_PORT)) {
 	if (serverType == ASYNC) {
 		new_connection = ConnectionHandler::create(io_service);
-		initialiseManager();
 	}
+	initialiseManager();
 }
 
 Server::~Server() {
@@ -52,11 +53,55 @@ void Server::handleAsyncAccept(const boost::system::error_code& e) {
 }
 
 void Server::handleSyncAccept(tcp::socket & socket) {
-	boost::array<char, 128> buf;
+	boost::array<char, 1024> buf;
+	//std::vector<char> buf;
 	boost::system::error_code error;
 	size_t lenin = socket.read_some(boost::asio::buffer(buf), error);
-	boost::asio::write(socket, boost::asio::buffer("ballsamento!"));
-	std::cout<<"Server::handleSyncAccept: "<<buf.data()<<std::endl;
+	// get recv string from vector
+	std::string recv_str;
+	{
+		std::stringstream ss;
+		for (int i = 0; i < lenin; i++) {
+			ss << buf[i];
+		}
+		recv_str = ss.str();
+	}
+	//std::string recv_str = common::Misc::getContainerString(buf);
+	std::cout << "Server::handleSyncAccept: " << "buf.size()=" << buf.size() << " lenin=" << lenin << "\t'" << recv_str
+			<< "'" << std::endl;
+
+	/*
+	 // forall in buf
+	 {
+	 std::stringstream ss;
+	 int count =0;
+	 boost::array<char, 128>::const_iterator it_buf = buf.begin();
+	 const boost::array<char, 128>::const_iterator it_buf_end = buf.end();
+	 while (it_buf != it_buf_end && count <lenin) {
+	 ss << it_buf;
+	 ++it_buf;
+	 ++count;
+	 }
+	 recv_str = ss.str();
+
+	 }
+	 */
+
+	bool comfound = this->parseCommand(recv_str);
+
+	// send back response
+	{
+		std::stringstream ss;
+
+		ss << "Server Recieved: " << recv_str << ".....";
+		if (comfound == true) {
+			ss << "success" << std::endl;
+		} else {
+			ss << "failed" << std::endl;
+		}
+		boost::asio::write(socket, boost::asio::buffer(ss.str()));
+	}
+
 	socket.close();
 }
 
@@ -82,24 +127,27 @@ void Server::processJobs() {
 }
 
 void Server::run() {
-	std::cout<<"Server::run: "<<""<<std::endl;
+	std::cout << "Server::run: " << "" << std::endl;
 	if (serverType == SYNC) {
 		this->runSync();
 	} else if (serverType == ASYNC) {
 		this->runAsync();
+	} else {
+		std::cout << "Server::run: " << "ERROR: Unknown server type!" << std::endl;
 	}
 }
 
 void Server::runSync() {
-	std::cout<<"Server::runSync: "<<""<<std::endl;
+	std::cout << "Server::runSync: " << "" << std::endl;
 	for (;;) {
 		tcp::socket socket(io_service);
 		acceptor.accept(socket);
 		this->handleSyncAccept(socket);
+		this->doJobs(IMMEDIATE);
 	}
 }
 void Server::runAsync() {
-	std::cout<<"Server::runAsync: "<<""<<std::endl;
+	std::cout << "Server::runAsync: " << "" << std::endl;
 	bool quit_server = false;
 	while (quit_server == false) {
 		try {
@@ -123,6 +171,32 @@ void Server::doJobs(JobPriority priority) {
 		jobslist.pop_front();
 	}
 
+}
+
+bool Server::parseCommand(const std::string comstr) {
+	CommandList comlist = commandDefs.getCommand(comstr);
+	//commandFunction comfunc;
+	JobPriority priority;
+	if (comlist == RUN) {
+		//	comfunc = Server::RUN_COMMAND;
+		priority = IMMEDIATE;
+	} else if (comlist == PAUSE) {
+		//comfunc = Server::PAUSE_COMMAND;
+		priority = IMMEDIATE;
+	} else if (comlist == STOP) {
+		//comfunc = Server::STOP_COMMAND;
+		priority = IMMEDIATE;
+	} else if (comlist == DESTROY) {
+		//comfunc = Server::DESTROY_COMMAND;
+		priority = IMMEDIATE;
+	} else {
+		std::cout << "Server::translateCommand: " << "WARNING: Unknown command '" << comstr << "'" << std::endl;
+		return false;
+	}
+
+	//boost::shared_ptr< Job > newjob(new Job(comlist, priority, comfunc));
+	this->addJob(comlist, priority);
+	return true;
 }
 
 void Server::addJob(CommandList com, JobPriority priority) {
@@ -151,6 +225,7 @@ void Server::addJob(CommandList com, JobPriority priority) {
 	 */
 	// TODO - need to fix mapping of function pointers
 
+	std::cout<<"Server::addJob: "<<"Searching for "<<"'"<<com<<"'" <<" map_sz:"<<serverCommandFunctions.size()<<std::endl;
 	std::map<CommandList, commandFunction>::iterator it_found = serverCommandFunctions.find(com);
 	if (it_found != serverCommandFunctions.end()) {
 		tempfunc = it_found->second;
