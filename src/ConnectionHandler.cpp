@@ -23,9 +23,9 @@ void ConnectionHandler::run() {
 		std::cout << "ConnectionHandler::run: " << "DEBUG: Do stuff here" << std::endl;
 		std::string message = "Socket debug reply";
 		// read data from socket until empty line
-		boost::array<char, 128> buf;
+		//boost::array<char, 128> buf;
 		boost::system::error_code error;
-		size_t lenin = socket.read_some(boost::asio::buffer(buf), error);
+		//size_t lenin = socket.read_some(boost::asio::buffer(buf), error);
 		boost::asio::write(socket, boost::asio::buffer(message));
 
 		/*std::cout << "Server::handleAccept: " << "" << std::endl;

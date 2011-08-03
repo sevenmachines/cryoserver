@@ -61,7 +61,7 @@ void Server::handleSyncAccept(tcp::socket & socket) {
 	std::string recv_str;
 	{
 		std::stringstream ss;
-		for (int i = 0; i < lenin; i++) {
+		for (unsigned int i = 0; i < lenin; i++) {
 			ss << buf[i];
 		}
 		recv_str = ss.str();
@@ -106,7 +106,7 @@ void Server::handleSyncAccept(tcp::socket & socket) {
 }
 
 void Server::processJobs() {
-	bool have_connection = false;
+	// bool have_connection = false;
 	bool have_immediate_jobs = false;
 	bool have_cycle_jobs = false;
 

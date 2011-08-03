@@ -26,6 +26,15 @@ Main::~Main() {
 #ifndef CRYOSERVER_CUTE
 
 int main(int argc, char **argv) {
+	std::cout<<"main: "<<"argc: "<<argc;
+	std::cout<<"[ ";
+	for (int i=0; i<argc; i++){
+		std::cout << argv[i];
+		if ( i < (argc-1) ){
+			std::cout<<", ";
+		}
+	}
+	std::cout << " ]"	<<std::endl;
 	Server server;
 	server.run();
 	//server.addJob(RUN, IMMEDIATE);

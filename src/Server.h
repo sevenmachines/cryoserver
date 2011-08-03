@@ -77,7 +77,7 @@ protected:
 	void processJobs();
 	void handleAsyncAccept(const boost::system::error_code& e);
 	void handleSyncAccept(boost::asio::ip::tcp::tcp::socket & socket);
-	bool parseCommand(const std::string comstr) ;
+	bool parseCommand(const std::string comstr);
 
 	std::list<boost::shared_ptr<Job> > & getMutableJobsList(const JobPriority priority);
 
@@ -129,11 +129,11 @@ private:
 
 	boost::asio::io_service io_service;
 
+	ServerType serverType;
+
 	boost::asio::ip::tcp::tcp::acceptor acceptor;
 
 	boost::shared_ptr<ConnectionHandler> new_connection; /**< pointer to connection, that will proceed next */
-
-	ServerType serverType;
 
 	CommandDefs commandDefs;
 
